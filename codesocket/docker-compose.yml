@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: ./db       # Carpeta donde se encuentra el Dockerfile del servidor de base de datos
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: sistdist
+      POSTGRES_DB: ubicaciones_db
+    ports:
+      - "5435:5432"       # Mapeo de puertos del contenedor PostgreSQL al host
+    networks:
+      - socketred
+
+  socket-server:
+    build:
+      context: ./socket_server    # Carpeta donde se encuentra el Dockerfile del servidor de sockets
+    depends_on:
+      - db                # Dependencia del servicio de la base de datos
+    ports:
+      - "5555:5555"
+    networks:
+      - socketred
+
+networks:
+  socketred:
+    driver: bridge
+
+volumes:
+  psql-data:
